@@ -5,17 +5,17 @@ import * as mongoose from 'mongoose';
 import * as methodOverride from 'method-override';
 import * as cors from 'cors';
 
-import config from './config';
+import { CONFIG } from './config';
 
-mongoose.connect(config.MONGO_URI);
+mongoose.connect(CONFIG.MONGO_URI);
 const mongoDB = mongoose.connection;
 
 mongoDB.on('error', () => {
-    console.error('MongoDB connection error. Please make sure that ', config.MONGO_URI, ' is running');
+    console.error('MongoDB connection error. Please make sure that ', CONFIG.MONGO_URI, ' is running');
 });
 
 mongoDB.once('open', () => {
-    console.log('Connected to MongoDB: ', config.MONGO_URI);
+    console.log('Connected to MongoDB: ', CONFIG.MONGO_URI);
 })
 
 
@@ -34,7 +34,7 @@ if (process.env.NODE_ENV !== 'dev') {
     app.use('/', express.static(path.join(__dirname, '../../dist')));
 }
 
-require('./api')(app, config);
+require('./api')(app, CONFIG);
 
 if (process.env.NODE_ENV !== 'dev') {
     app.get('*', (req, res) => {

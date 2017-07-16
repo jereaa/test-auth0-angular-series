@@ -4,15 +4,18 @@
         <h1 class="header-page-siteTitle">
             <a routerLink="/">RSVP</a>
         </h1>
+        <div class="header-page-authStatus">
+            <a *ngIf="!authService.loggedIn" (click)="authService.login()">Log In</a>
+            <span *ngIf="authService.loggedIn">{{authService.userProfile?.name}}
+                <span class="opacity-half">| </span><a (click)="authService.logout()">Log Out</a>
+            </span>
+        </div>
     </div>
 
     <nav id="nav" class="nav" role="navigation">
         <ul class="nav-list">
             <li>
-                <a 
-                    routerLink="/"
-                    routerLinkActive="active"
-                    [routerLinkActiveOptions]="{ exact: true }">Events</a>
+                <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Events</a>
             </li>
         </ul>
     </nav>

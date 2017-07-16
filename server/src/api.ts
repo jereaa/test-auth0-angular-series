@@ -2,8 +2,9 @@ import * as jwt from 'express-jwt';
 import * as jwks from 'jwks-rsa';
 
 import { Express } from 'express';
+import { Config } from './config';
 
-module.exports = (app: Express, config: any) => {
+module.exports = (app: Express, config: Config) => {
     const jwtCheck = jwt({
         secret: jwks.expressJwtSecret({
             cache: true,
