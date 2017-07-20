@@ -7,7 +7,7 @@
         "start": "concurrently \"tsc -w -p ./server/\" \"nodemon ./server/dist/server.js\" \"ng serve\"",
         "build": "ng build",
         "test": "ng test",
-        "lint": "ng lint",
+        "lint": "ng lint --type-check=true",
         "e2e": "ng e2e",
         "server": "concurrently \"tsc -w -p ./server/\" \"nodemon ./server/dist/server.js\"",
         "client": "ng serve"

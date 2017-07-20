@@ -18,7 +18,6 @@ mongoDB.once('open', () => {
     console.log('Connected to MongoDB: ', CONFIG.MONGO_URI);
 })
 
-
 const app = express();
 
 app.use(bodyParser.json());
@@ -29,12 +28,13 @@ app.use(cors());
 const port = process.env.PORT || '8083';
 app.set('port', port);
 
-
 if (process.env.NODE_ENV !== 'dev') {
     app.use('/', express.static(path.join(__dirname, '../../dist')));
 }
 
-require('./api')(app, CONFIG);
+// require('./api')(app, CONFIG);
+import { default as apiSetUp } from './api';
+apiSetUp(app, CONFIG);
 
 if (process.env.NODE_ENV !== 'dev') {
     app.get('*', (req, res) => {

@@ -1,9 +1,13 @@
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpModule, Http, RequestOptions } from '@angular/http';
+import { AuthHttp } from 'angular2-jwt';
 
 import { AppRoutingModule } from './app-routing.module';
 
 import { AuthService } from './auth/auth.service';
+
+import { authHttpFactory } from './auth/auth-http.factory';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
@@ -17,16 +21,21 @@ import { CallbackComponent } from './pages/callback/callback.component';
         HomeComponent,
         HeaderComponent,
         FooterComponent,
-        CallbackComponent
+        CallbackComponent,
     ],
     imports: [
         BrowserModule,
-        AppRoutingModule
+        AppRoutingModule,
     ],
     providers: [
         Title,
-        AuthService
+        AuthService,
+        {
+            provide: AuthHttp,
+            useFactory: authHttpFactory,
+            deps: [ Http, RequestOptions ],
+        },
     ],
-    bootstrap: [ AppComponent ]
+    bootstrap: [ AppComponent ],
 })
 export class AppModule { }

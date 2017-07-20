@@ -16,9 +16,10 @@ export class AuthService {
         responseType: 'token id_token',
         redirectUri: AUTH_CONFIG.REDIRECT,
         audience: AUTH_CONFIG.AUDIENCE,
-        scope: AUTH_CONFIG.SCOPE
+        scope: AUTH_CONFIG.SCOPE,
     });
     userProfile: any;
+    isAdmin: boolean;
     // Create a stream of logged in status to communicate throughout app
     loggedIn: boolean;
     loggedIn$ = new BehaviorSubject<boolean>(this.loggedIn);
@@ -32,24 +33,25 @@ export class AuthService {
 
         if (this.tokenValid) {
             this.userProfile = JSON.parse(lsProfile);
+            this.isAdmin = localStorage.getItem('isAdmin') === 'true';
             this.setLoggedIn(true);
         } else if (!this.tokenValid && lsProfile) {
             this.logout();
         }
     }
 
-    setLoggedIn(value: boolean) {
+    setLoggedIn(value: boolean): void {
         // Update login status subject
         this.loggedIn$.next(value);
         this.loggedIn = value;
     }
 
-    login() {
+    login(): void {
         // Auth0 authorize request
         this._auth0.authorize(null);
     }
 
-    handleAuth() {
+    handleAuth(): void {
         // When Auth0 hash parsed, get profile
         this._auth0.parseHash((err, authResult) => {
             if (authResult && authResult.accessToken && authResult.idToken) {
@@ -62,7 +64,7 @@ export class AuthService {
         });
     }
 
-    private _getProfile(authResult) {
+    private _getProfile(authResult): void {
         // Use access token to retrieve user's profile and set session
         this._auth0.client.userInfo(authResult.accessToken, (err, profile) => {
             if (profile) {
@@ -73,7 +75,7 @@ export class AuthService {
         });
     }
 
-    private _setSession(authResult, profile) {
+    private _setSession(authResult, profile): void {
         // Save session data and update login status subject
         const expiresAt = JSON.stringify((authResult.expiresIn * 1000) + Date.now());
         // Set tokens and expiration in localStorage and props
@@ -82,18 +84,29 @@ export class AuthService {
         localStorage.setItem('expires_at', expiresAt);
         localStorage.setItem('profile', JSON.stringify(profile));
         this.userProfile = profile;
+
+        this.isAdmin = this._checkAdmin(profile);
+        localStorage.setItem('isAdmin', this.isAdmin.toString());
         // Update login status in loggedIn$ stream
         this.setLoggedIn(true);
     }
 
-    logout() {
+    private _checkAdmin(profile): boolean {
+        // Check if the user has admin roles
+        const roles = profile[ AUTH_CONFIG.NAMESPACE ] || [];
+        return roles.indexOf('admin') > -1;
+    }
+
+    logout(): void {
         // Ensure all auth items removed from localStorage
         localStorage.removeItem('access_token');
         localStorage.removeItem('id_token');
         localStorage.removeItem('profile');
         localStorage.removeItem('authRedirect');
+        localStorage.removeItem('isAdmin');
         // Reset local properties, update loggedIn$ stream
         this.userProfile = undefined;
+        this.isAdmin = undefined;
         this.setLoggedIn(false);
         // Return to homepage
         this.router.navigate([ '/' ]);

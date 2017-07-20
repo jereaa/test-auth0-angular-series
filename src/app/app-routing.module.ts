@@ -8,16 +8,16 @@ const routes: Routes = [
     {
         path: '',
         component: HomeComponent,
-        children: []
+        children: [],
     },
     {
         path: 'callback',
-        component: CallbackComponent
-    }
+        component: CallbackComponent,
+    },
 ];
 
 @NgModule({
     imports: [ RouterModule.forRoot(routes) ],
-    exports: [ RouterModule ]
+    exports: [ RouterModule ],
 })
 export class AppRoutingModule { }
