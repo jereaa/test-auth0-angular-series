@@ -5,8 +5,8 @@ const Schema = mongoose.Schema;
 export interface IEventModel extends mongoose.Document {
     title: string;
     location: string;
-    startDateTime: Date;
-    endDateTime: Date;
+    startDatetime: Date;
+    endDatetime: Date;
     description?: string;
     viewPublic: boolean;
 }
@@ -14,8 +14,8 @@ export interface IEventModel extends mongoose.Document {
 const eventSchema = new Schema({
     title: { type: String, required: true },
     location: { type: String, required: true },
-    startDateTime: { type: Date, required: true },
-    endDateTime: { type: Date, required: true },
+    startDatetime: { type: Date, required: true },
+    endDatetime: { type: Date, required: true },
     description: String,
     viewPublic: { type: Boolean, required: true },
 });

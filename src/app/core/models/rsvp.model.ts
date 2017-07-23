@@ -1,4 +1,4 @@
-export class Rsvp {
+export class RsvpModel {
     constructor(
         public userId: string,
         public name: string,
