@@ -46,7 +46,10 @@ export class AuthService {
         this.loggedIn = value;
     }
 
-    login(): void {
+    login(redirect?: string): void {
+        // Set redirect after login
+        const _redirect = redirect ? redirect : this.router.url;
+        localStorage.setItem('authRedirect', _redirect);
         // Auth0 authorize request
         this._auth0.authorize(null);
     }
@@ -58,6 +61,8 @@ export class AuthService {
                 window.location.hash = '';
                 this._getProfile(authResult);
             } else if (err) {
+                this._clearRedirect();
+                this.router.navigate(['/']);
                 console.error(`Error authenticating: ${err.error}`);
             }
             this.router.navigate([ '/' ]);
@@ -69,6 +74,8 @@ export class AuthService {
         this._auth0.client.userInfo(authResult.accessToken, (err, profile) => {
             if (profile) {
                 this._setSession(authResult, profile);
+                this.router.navigate([localStorage.getItem('authRedirect') || '/']);
+                this._clearRedirect();
             } else if (err) {
                 console.error(`Error authenticating: ${err.error}`);
             }
@@ -93,8 +100,13 @@ export class AuthService {
 
     private _checkAdmin(profile): boolean {
         // Check if the user has admin roles
-        const roles = profile[ AUTH_CONFIG.NAMESPACE ] || [];
+        const roles = profile[AUTH_CONFIG.NAMESPACE] || [];
         return roles.indexOf('admin') > -1;
+    }
+
+    private _clearRedirect(): void {
+        // Remove redirect from localStorage
+        localStorage.removeItem('authRedirect');
     }
 
     logout(): void {
@@ -104,6 +116,7 @@ export class AuthService {
         localStorage.removeItem('profile');
         localStorage.removeItem('authRedirect');
         localStorage.removeItem('isAdmin');
+        localStorage.removeItem('authRedirect');
         // Reset local properties, update loggedIn$ stream
         this.userProfile = undefined;
         this.isAdmin = undefined;

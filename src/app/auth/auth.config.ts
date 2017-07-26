@@ -15,5 +15,5 @@ export const AUTH_CONFIG: IAuthConfig = {
     AUDIENCE: 'http://localhost:8083/api/', // likely http://localhost:8083/api/
     REDIRECT: `${ENV.BASE_URI}/callback`,
     SCOPE: 'openid profile',
-    NAMESPACE: 'https://myapp.com/roles',
+    NAMESPACE: 'http://myapp.com/roles',
 };
