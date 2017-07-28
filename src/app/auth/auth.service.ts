@@ -74,7 +74,7 @@ export class AuthService {
         this._auth0.client.userInfo(authResult.accessToken, (err, profile) => {
             if (profile) {
                 this._setSession(authResult, profile);
-                this.router.navigate([localStorage.getItem('authRedirect') || '/']);
+                this._redirect();
                 this._clearRedirect();
             } else if (err) {
                 console.error(`Error authenticating: ${err.error}`);
@@ -102,6 +102,21 @@ export class AuthService {
         // Check if the user has admin roles
         const roles = profile[AUTH_CONFIG.NAMESPACE] || [];
         return roles.indexOf('admin') > -1;
+    }
+
+    private _redirect(): void {
+        // Redirect with or without 'tab' query parameter
+        // Note: does not support additional params besides 'tab'
+        const fullRedirect = decodeURI(localStorage.getItem('authRedirect'));
+        const redirectArr = fullRedirect.split('?tab=');
+        const navArr = [redirectArr[0] || '/'];
+        const tabObj = redirectArr[1] ? { queryParams: { tab: redirectArr[1] }} : null;
+
+        if (!tabObj) {
+            this.router.navigate(navArr);
+        } else {
+            this.router.navigate(navArr, tabObj);
+        }
     }
 
     private _clearRedirect(): void {

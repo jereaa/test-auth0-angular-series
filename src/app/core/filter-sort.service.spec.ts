@@ -5,7 +5,7 @@ import { FilterSortService } from './filter-sort.service';
 describe('FilterSortService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [FilterSortService]
+      providers: [FilterSortService],
     });
   });
 
