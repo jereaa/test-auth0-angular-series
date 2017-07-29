@@ -4,6 +4,7 @@ import { HttpModule, Http, RequestOptions } from '@angular/http';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AuthHttp } from 'angular2-jwt';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -25,6 +26,8 @@ import { AdminComponent } from './pages/admin/admin.component';
 import { EventComponent } from './pages/event/event.component';
 import { EventDetailComponent } from './pages/event/event-detail/event-detail.component';
 import { RsvpComponent } from './pages/event/rsvp/rsvp.component';
+import { RsvpFormComponent } from './pages/event/rsvp/rsvp-form/rsvp-form.component';
+import { SubmittingComponent } from './core/forms/submitting.component';
 
 @NgModule({
     declarations: [
@@ -38,12 +41,15 @@ import { RsvpComponent } from './pages/event/rsvp/rsvp.component';
         EventComponent,
         EventDetailComponent,
         RsvpComponent,
+        RsvpFormComponent,
+        SubmittingComponent,
     ],
     imports: [
         BrowserModule,
         FormsModule,
         HttpClientModule,
         AppRoutingModule,
+        BrowserAnimationsModule,
     ],
     providers: [
         Title,

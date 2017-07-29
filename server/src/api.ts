@@ -96,4 +96,54 @@ export default function(app: express.Application, config: IConfig) {
             return res.send(rsvpsArr);
         });
     });
+
+    app.post('/api/rsvp/new', jwtCheck, (req: express.Request, res: express.Response) => {
+        RsvpSchema.findOne({ eventId: req.body.eventId, userId: req.body.userId }, (err: Error, existingRsvp: IRsvpModel) => {
+            if (err) {
+                return res.status(500).send({ message: err.message });
+            }
+            if (existingRsvp) {
+                return res.status(409).send({ message: 'You have already RSVPed to this event.' });
+            }
+            const rsvp = new RsvpSchema({
+                userId: req.body.userId,
+                name: req.body.name,
+                eventId: req.body.eventId,
+                attending: req.body.attending,
+                guests: req.body.guests,
+                comments: req.body.comments,
+            });
+            rsvp.save((error: Error) => {
+                if (error) {
+                    return res.status(500).send({ message: error.message });
+                }
+                res.send(rsvp);
+            });
+        });
+    });
+
+    app.put('/api/rsvp/:id', jwtCheck, (req: express.Request, res: express.Response) => {
+        RsvpSchema.findById(req.params.id, (err: Error, rsvp: IRsvpModel) => {
+            if (err) {
+                return res.status(500).send({ message: err.message });
+            }
+            if (!rsvp) {
+                return res.status(400).send({ message: 'RSVP not found.' });
+            }
+            if (rsvp.userId !== req.user.sub) {
+                return res.status(401).send({ message: 'You cannot edit someone else\'s RSVP.' });
+            }
+            rsvp.name = req.body.name;
+            rsvp.attending = req.body.attending;
+            rsvp.guests = req.body.guests;
+            rsvp.comments = req.body.comments;
+
+            rsvp.save((error: Error) => {
+                if (error) {
+                    return res.status(500).send({ message: error.message });
+                }
+                res.send(rsvp);
+            });
+        });
+    });
 }
