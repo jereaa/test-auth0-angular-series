@@ -146,4 +146,85 @@ export default function(app: express.Application, config: IConfig) {
             });
         });
     });
+
+    // POST a new event
+    app.post('/api/event/new', jwtCheck, adminCheck, (req: express.Request, res: express.Response) => {
+        EventSchema.findOne({
+            title: req.body.title,
+            location: req.body.location,
+            startDatetime: req.body.startDatetime,
+        }, (err: Error, existingEvent: IEventModel) => {
+            if (err) {
+                return res.status(500).send({ message: err.message });
+            }
+            if (existingEvent) {
+                return res.status(409)
+                    .send({ message: 'You have already created an event with this title, location, and start date/time.' });
+            }
+            const event = new EventSchema({
+                title: req.body.title,
+                location: req.body.location,
+                startDatetime: req.body.startDatetime,
+                endDatetime: req.body.endDatetime,
+                description: req.body.description,
+                viewPublic: req.body.viewPublic,
+            });
+            event.save((error: Error) => {
+                if (error) {
+                    return res.status(500).send({ message: error.message });
+                }
+                res.send(event);
+            });
+        });
+    });
+
+    // PUT (edit) an existing event
+    app.put('/api/event/:id', jwtCheck, adminCheck, (req: express.Request, res: express.Response) => {
+        EventSchema.findById(req.params.id, (err: Error, event: IEventModel) => {
+            if (err) {
+                return res.status(500).send({ message: err.message });
+            }
+            if (!event) {
+                return res.status(400).send({ message: 'Event not found.' });
+            }
+            event.title = req.body.title;
+            event.location = req.body.location;
+            event.startDatetime = req.body.startDatetime;
+            event.endDatetime = req.body.endDatetime;
+            event.viewPublic = req.body.viewPublic;
+            event.description = req.body.description;
+
+            event.save((error: Error) => {
+                if (error) {
+                    return res.status(500).send({ message: error.message });
+                }
+                res.send(event);
+            });
+        });
+    });
+
+    // DELETE and event and all associated RSVPs
+    app.delete('/api/event/:id', jwtCheck, adminCheck, (req: express.Request, res: express.Response) => {
+        EventSchema.findById(req.params.id, (err: Error, event: IEventModel) => {
+            if (err) {
+                return res.status(500).send({ message: err.message });
+            }
+            if (!event) {
+                return res.status(400).send({ message: 'Event not found.' });
+            }
+            RsvpSchema.find({ eventId: req.params.id }, (error: Error, rsvps: IRsvpModel[]) => {
+                if (rsvps) {
+                    rsvps.forEach((rsvp: IRsvpModel) => {
+                        rsvp.remove();
+                    });
+                }
+                event.remove((error2: Error) => {
+                    if (error2) {
+                        return res.status(500).send({ message: error2.message });
+                    }
+                    res.status(200).send({ message: 'Event and RSVPs successfully deleted.' });
+                });
+            });
+        });
+    });
 }
