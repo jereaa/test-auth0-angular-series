@@ -227,4 +227,32 @@ export default function(app: express.Application, config: IConfig) {
             });
         });
     });
+
+    // GET list of upcoming events user has RSVPed to
+    app.get('/api/events/:userId', jwtCheck, (req: express.Request, res: express.Response) => {
+        RsvpSchema.find({ userId: req.params.userId }, 'eventId', (err: Error, rsvps: IRsvpModel[]) => {
+            const _eventIdsArr = rsvps.map((rsvp) => rsvp.eventId);
+            const _rsvpEventsProjection = 'title startDatetime endDatetime';
+            const eventsArr: IEventModel[] = [];
+
+            if (err) {
+                return res.status(500).send({ message: err.message });
+            }
+            if (rsvps) {
+                EventSchema.find(
+                    { _id: { $in: _eventIdsArr }, startDatetime: { $gte: new Date() } },
+                    _rsvpEventsProjection, (error: Error, events: IEventModel[]) => {
+                        if (error) {
+                            return res.status(500).send({ message: error.message });
+                        }
+                        if (events) {
+                            events.forEach((event) => {
+                                eventsArr.push(event);
+                            });
+                        }
+                        res.send(eventsArr);
+                    });
+            }
+        });
+    });
 }

@@ -7,6 +7,7 @@ interface IAuthConfig {
     REDIRECT: string;
     SCOPE: string;
     NAMESPACE: string;
+    SILENT_REDIRECT: string;
 };
 
 export const AUTH_CONFIG: IAuthConfig = {
@@ -16,4 +17,5 @@ export const AUTH_CONFIG: IAuthConfig = {
     REDIRECT: `${ENV.BASE_URI}/callback`,
     SCOPE: 'openid profile',
     NAMESPACE: 'http://myapp.com/roles',
+    SILENT_REDIRECT: `${ENV.SILENT_URI}`,
 };

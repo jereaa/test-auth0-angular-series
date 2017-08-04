@@ -25,6 +25,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(methodOverride('X-HTTP-Method-Override'));
 app.use(cors());
 
+app.use('/silent', express.static(path.join(__dirname, './../../silent.html')));
+
 const port = process.env.PORT || '8083';
 app.set('port', port);
 

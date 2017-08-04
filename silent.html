@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="https://cdn.auth0.com/js/auth0/8.7/auth0.min.js"></script>
+    <script>
+        var AUTH0_CLIENT_ID = 'G0inVjcXnYucOEHr1d0QYC51w5WFE7ZY';
+        var AUTH0_DOMAIN = 'jereaa.auth0.com'; // e.g., kmaida.auth0.com
+
+        var webAuth = new auth0.WebAuth({
+            clientID: AUTH0_CLIENT_ID,
+            domain: AUTH0_DOMAIN,
+            scope: 'openid profile',
+            responseType: 'token id_token',
+            redirectUri: 'http://localhost:4200'
+        });
+
+        webAuth.parseHash(window.location.hash, function (err, response) {
+            parent.postMessage(err || response, 'http://localhost:4200');
+        });
+    </script>
+</head>
+<body></body>
+</html>
