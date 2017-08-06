@@ -55,13 +55,7 @@ export class MyRsvpsComponent implements OnInit, OnDestroy {
         const sub = this.auth.userProfile.sub.split('|')[0];
         let idp = sub;
 
-        if (sub === 'auth0') {
-            idp = 'Username/Password';
-        } else if (idp === 'google-oauth2') {
-            idp = 'Google';
-        } else {
-            idp = this.utils.capitalize(sub);
-        }
+        idp = sub === 'auth0' ? 'Username/Password' : idp === 'google-oauth2' ? 'Google' : this.utils.capitalize(sub);
         return idp;
     }
 

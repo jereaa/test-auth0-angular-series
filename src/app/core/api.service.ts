@@ -100,7 +100,7 @@ export class ApiService {
     getUserEvents$(userId: string): Observable<EventModel[]> {
         return this.http
             .get(`${ENV.BASE_API}events/${userId}`, {
-                headers: new HttpHeaders().set('Authorization', this._authHeader)
+                headers: new HttpHeaders().set('Authorization', this._authHeader),
             })
             .catch(this._handleError);
     }

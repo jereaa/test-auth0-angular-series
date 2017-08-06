@@ -8,7 +8,7 @@ describe('DeleteEventComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DeleteEventComponent ]
+      declarations: [ DeleteEventComponent ],
     })
     .compileComponents();
   }));

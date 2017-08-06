@@ -8,7 +8,7 @@ describe('MyRsvpsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MyRsvpsComponent ]
+      declarations: [ MyRsvpsComponent ],
     })
     .compileComponents();
   }));
